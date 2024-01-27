@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="/user/user-bookings.css">
+
+    <title>Train Booking app!!</title>
+</head>
+
+<body>
+
+<div class="navbar">
+
+    <h3 >SB TrainConnect</h3>
+
+    <div class="nav-options" >
+
+        <a href="/">Home</a>
+        <a href="/bookings/" id="bookingsUser" >Bookings</a>
+        <p id="logoutBtn" >logout</p>
+    </div>
+
+</div>
+
+<script>
+
+    const myLink = document.getElementById('logoutBtn');
+
+    myLink.addEventListener('click', function(event) {
+        event.preventDefault();
+        localStorage.clear();
+        for (let key in localStorage) {
+            if (localStorage.hasOwnProperty(key)) {
+                localStorage.removeItem(key);
+            }
+        }
+        window.location.href = '/';
+    });
+
+    const userDataJSON = localStorage.getItem('userData');
+
+    const userData = JSON.parse(userDataJSON);
+
+    const userId = userData._id;
+
+    document.getElementById("bookingsUser").href = "/bookings/" + userId;
+
+</script>
+
+
+<div class="user-bookingsPage">
+    <h1>Bookings</h1>
+
+    <div class="user-bookings"  th:if="${bookings}" >
+
+        <div class="user-booking" id="bookingForm" th:each="booking: ${bookings}" >
+            <p><b>Booking ID:</b> <i th:text="${booking._id}" ></i></p>
+            <span>
+              <p><b>Mobile:</b> <i th:text="${booking.mobile}" ></i></p>
+              <p><b>Email:</b> <i th:text="${booking.email}" ></i> </p>
+            </span>
+            <span>
+              <p><b>Train no:</b> <i th:text="${booking.trainNumber}" ></i> </p>
+              <p><b>Train name:</b> <i th:text="${booking.trainName}" ></i> </p>
+            </span>
+            <span>
+              <p><b>On-boarding:</b> <i th:text="${booking.startStation}" ></i></p>
+              <p><b>Destination:</b> <i th:text="${booking.destinationStation}" ></i></p>
+            </span>
+            <span>
+                <p><b>Passengers:</b><i th:text="${booking.ticketsCount}" ></i></p>
+
+                <p><b>Seats:</b> <i th:text="${booking.seats}" ></i></p>
+            </span>
+            <p><b>Booking date & time:</b> <i th:text="${booking.bookingDate}" ></i></p>
+            <p><b>Journey date & time:</b> <i th:text="${booking.journeyDate}" ></i></p>
+
+            <span>
+              <p><b>Total price:</b> &#8377; <i th:text="${booking.totalPrice}" ></i></p>
+
+                <p th:if="${booking.bookingStatus == 'cancelled'}" style="color: red"><b>Booking status:</b> <i th:text="${booking.bookingStatus}" ></i></p>
+
+                <p th:if="${booking.bookingStatus == 'confirmed'}" ><b>Booking status:</b>  <i th:text="${booking.bookingStatus}" ></i></p>
+
+            </span>
+            <div>
+                <a th:href="${'/cancel-user-ticket/' + booking._id }" ><button th:if="${booking.bookingStatus == 'confirmed'}" class="btn btn-danger"  >Cancel Ticket</button></a>
+            </div>
+
+        </div>
+
+
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+</body>
+</html>

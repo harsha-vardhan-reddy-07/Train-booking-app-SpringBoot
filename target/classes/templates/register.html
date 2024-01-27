@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="/authenticate.css">
+
+    <title>Train Booking app!!</title>
+</head>
+
+<body>
+
+<div class="navbar">
+    <h3 >SB TrainConnect</h3>
+
+    <div class="nav-options" >
+        <a href="/">Home</a>
+        <a href="/login">Login</a>
+    </div>
+
+</div>
+
+<div class="AuthenticatePage">
+
+    <form class="authForm" id="registerForm" >
+        <h2>Register</h2>
+        <div class="form-floating mb-3 authFormInputs">
+            <input type="text" class="form-control" id="floatingInput" name="username" placeholder="username"  />
+            <label for="floatingInput">Username</label>
+        </div>
+        <div class="form-floating mb-3 authFormInputs">
+            <input type="email" class="form-control" id="floatingEmail" name="email" placeholder="name@example.com"  />
+            <label for="floatingInput">Email address</label>
+        </div>
+        <div class="form-floating mb-3 authFormInputs">
+            <input type="password" class="form-control" id="floatingPassword" name="password" placeholder="Password" >
+            <label for="floatingPassword">Password</label>
+        </div>
+        <select class="form-select form-select-lg mb-3" name="usertype" aria-label=".form-select-lg example" >
+            <option value="">User type</option>
+            <option value="admin">Admin</option>
+            <option value="customer">Customer</option>
+        </select>
+
+        <button class="btn btn-primary" type="submit" >Sign up</button>
+        <p>Already registered? <a href="/login" >Login</a></p>
+    </form>
+
+</div>
+
+
+<script>
+    document.getElementById('registerForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+
+        const formData = new FormData(this);
+
+        fetch('/register-user', {
+            method: 'POST',
+            body: formData,
+        })
+            .then(response => {
+                if (response.ok) {
+
+                    var data = response.json();
+
+                    return data;
+                } else {
+                    console.error('Registration failed');
+                }
+            })
+            .then(userData => {
+                localStorage.setItem('userData', JSON.stringify(userData));
+
+                const data = JSON.parse(JSON.stringify(userData));
+
+                if(data.usertype === 'customer'){
+                    window.location.href = `/`;
+
+                }else if(data.usertype === 'admin'){
+                    window.location.href = '/admin';
+
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    });
+</script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+</body>
+</html>

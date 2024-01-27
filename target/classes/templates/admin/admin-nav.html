@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Train Booking app!!</title>
+
+    <link rel="stylesheet" href="/admin/admin-nav.css">
+
+
+</head>
+<body>
+
+<div class="navbar">
+    <h3 >SB TrainConnect (Admin)</h3>
+    <div class="nav-options" >
+
+        <a href="/admin" >Home</a>
+        <a href="/all-users" >Users</a>
+        <a href="/all-bookings" >Bookings</a>
+        <a href="/all-trains" >Trains</a>
+        <a href="/new-train">Add Train</a>
+        <p id="logoutBtn" >logout</p>
+    </div>
+
+</div>
+
+<script>
+
+    const myLink = document.getElementById('logoutBtn');
+
+    myLink.addEventListener('click', function(event) {
+        event.preventDefault();
+        localStorage.clear();
+        for (let key in localStorage) {
+            if (localStorage.hasOwnProperty(key)) {
+                localStorage.removeItem(key);
+            }
+        }
+        window.location.href = '/';
+    });
+</script>
+
+
+
+</body>
+</html>

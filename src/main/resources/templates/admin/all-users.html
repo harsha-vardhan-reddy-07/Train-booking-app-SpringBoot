@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="/admin/all-users.css">
+
+    <title>Train Booking app!!</title>
+</head>
+
+<body>
+
+<div th:insert="/admin/admin-nav.html" ></div>
+
+<div class="all-users-page">
+    <h2>All users</h2>
+    <div class="all-users" th:if="${users}" >
+
+        <div class="user" th:each="user : ${users} " >
+            <p><b>UserId </b><span th:text="${user._id}" ></span></p>
+            <p><b>Username </b><span th:text="${user.username}" ></span></p>
+            <p><b>Email </b><span th:text="${user.email}" ></span></p>
+            <p><b>Usertype </b><span th:text="${user.usertype}" ></span></p>
+        </div>
+
+
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+</body>
+</html>

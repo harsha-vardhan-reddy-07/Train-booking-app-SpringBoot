@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="/user/book-train.css">
+    <title>Train Booking app!!</title>
+</head>
+
+<body>
+
+<div class="navbar">
+
+    <h3 >SB TrainConnect</h3>
+
+    <div class="nav-options" >
+
+        <a href="/">Home</a>
+        <a href="/bookings/" id="bookingsUser" >Bookings</a>
+        <p id="logoutBtn" >logout</p>
+    </div>
+
+</div>
+
+<script>
+
+    const myLink = document.getElementById('logoutBtn');
+
+    myLink.addEventListener('click', function(event) {
+        event.preventDefault();
+        localStorage.clear();
+        for (let key in localStorage) {
+            if (localStorage.hasOwnProperty(key)) {
+                localStorage.removeItem(key);
+            }
+        }
+        window.location.href = '/';
+    });
+
+    const userDataJSON = localStorage.getItem('userData');
+
+    const userData = JSON.parse(userDataJSON);
+
+    const userId = userData._id;
+
+    document.getElementById("bookingsUser").href = "/bookings/" + userId;
+
+</script>
+
+<div class='BookTrainPage'>
+
+    <form class="BookingTrainPageContainer" id="ticketBookingForm" >
+        <h2>Book ticket</h2>
+        <input type="hidden" name="user" id="userId" >
+        <span>
+            <p><b>Train Name: </b> <i th:text="${train.trainName}" ></i></p>
+            <p><b>Train No: </b> <i th:text="${train.trainNumber}" ></i></p>
+        </span>
+        <span>
+            <p><b>Start station: </b> <i th:text="${train.origin}" ></i></p>
+            <p><b>Base price: </b> <i th:text="${train.basePrice}" ></i></p>
+
+        </span>
+        <span>
+            <p><b>Destination: </b> <i th:text="${train.destination}" ></i></p>
+            <p><b>Total seats: </b> <i th:text="${train.totalSeats}" ></i></p>
+        </span>
+
+        <input type="hidden" id="basePrice" th:value="${train.basePrice}" />
+
+        <span>
+            <div class="form-floating mb-3">
+                <input type="email" class="form-control" name="email" id="floatingInputemail"  />
+                <label for="floatingInputemail">Email</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" name="mobile" id="floatingInputmobile" />
+                <label for="floatingInputmobile">Mobile</label>
+            </div>
+        </span>
+      <span class='span3'>
+        <div class="no-of-passengers">
+          <div class="form-floating mb-3">
+                <input type="number" class="form-control" name="ticketsCount" id="noOfPassengers" />
+                <label for="noOfPassengers">No of passengers</label>
+          </div>
+        </div>
+        <div class="form-floating mb-3">
+                <input type="date" class="form-control" name="journeyDate" id="floatingInputreturnDate" />
+                <label for="floatingInputreturnDate">Journey date</label>
+        </div>
+        <div class="form-floating">
+              <select class="form-select form-select-sm mb-3" name="coachClass" id="seatTypeSelect" aria-label=".form-select-sm example" >
+                <option value="" disabled>Select</option>
+                <option value="seater">Seater (General)</option>
+                <option value="sleeper">Sleeper</option>
+                <option value="3ac">3 tier AC</option>
+                <option value="2ac">2 tier AC</option>
+                <option value="1ac">1 tier AC</option>
+              </select>
+              <label for="seatTypeSelect">Coach type</label>
+        </div>
+
+      </span>
+
+
+        <h6><b>Total price</b> <i id="totalTicketPriceText" >0</i></h6>
+        <input type="hidden" name="totalPrice" id="totalPrice" />
+        <button class='btn btn-primary' type="submit" >Book now</button>
+    </form>
+</div>
+
+
+<script>
+
+
+
+
+    let userDataJSON1 = localStorage.getItem('userData');
+
+    let userData1 = JSON.parse(userDataJSON1);
+
+
+    document.getElementById("userId").value = userData1._id;
+
+    let totalPriceText = document.getElementById("totalTicketPriceText");
+    let totalPriceValue = document.getElementById("totalPrice");
+
+    let seatType = {"seater": 1, "sleeper": 2, "3ac": 3, "2ac": 4, "1ac": 5}
+
+    document.getElementById("noOfPassengers").addEventListener("input", function (event){
+
+        let seat = document.getElementById('seatTypeSelect').value;
+        let basePrice = document.getElementById('basePrice').value;
+
+        let total = event.target.value * seatType[seat] * basePrice;
+        totalPriceText.innerHTML = total.toString();
+        totalPriceValue.value = total.toString()
+    })
+
+    document.getElementById("seatTypeSelect").addEventListener("input", function (event){
+
+        let passengers = document.getElementById('noOfPassengers').value;
+        let basePrice = document.getElementById('basePrice').value;
+
+        let total = passengers  * seatType[event.target.value] * basePrice;
+        totalPriceText.innerHTML = total.toString();
+        totalPriceValue.value = total.toString()
+    })
+
+</script>
+
+
+<script>
+    document.getElementById("ticketBookingForm").addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+
+        const url = window.location.href;
+        const id = url.replace('http://localhost:8080/book-train/', '');
+
+        fetch(`/book-ticket/${id}`, {
+            method: 'POST',
+            body: formData,
+        })
+            .then(response => {
+                if (response.ok) {
+
+                    var data = response.json();
+
+                    return data;
+                } else {
+                    console.error('booking failed');
+                }
+            })
+            .then(trainData => {
+                alert("Booking successful");
+
+                window.location.href = '/bookings/' + userData1._id;
+
+            })
+            .catch(error => {
+                alert("booking failed!!");
+                console.error('Error:', error);
+            });
+    });
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+</body>
+</html>

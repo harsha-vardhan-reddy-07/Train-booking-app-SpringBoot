@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="/landing.css">
+
+    <title>Train Booking app!!</title>
+</head>
+
+<body>
+
+<div class="navbar">
+    <h3 >SB TrainConnect</h3>
+
+    <div class="nav-options" id="logged-out-nav" >
+        <a href="/" >Home</a>
+        <a href="/login" >Login</a>
+    </div>
+
+    <div class="nav-options" id="logged-in-nav" >
+        <a href="/" >Home</a>
+        <a href="/bookings/" id="bookingsUser" >Bookings</a>
+        <p id="logoutBtn" >logout</p>
+    </div>
+
+</div>
+
+<script>
+
+    const myLink = document.getElementById('logoutBtn');
+
+    myLink.addEventListener('click', function(event) {
+        event.preventDefault();
+        localStorage.clear();
+        for (let key in localStorage) {
+            if (localStorage.hasOwnProperty(key)) {
+                localStorage.removeItem(key);
+            }
+        }
+        window.location.href = '/';
+    });
+
+    const userDataJSON = localStorage.getItem('userData');
+
+    const userData = JSON.parse(userDataJSON);
+
+    const userId = userData._id;
+
+    document.getElementById("bookingsUser").href = "/bookings/" + userId;
+
+</script>
+
+<div class="landingPage">
+
+
+
+    <div class="landingHero">
+
+
+        <div class="landingHero-title">
+            <h1 class="banner-h1">Embark on a Journey to the Extraordinary!!</h1>
+            <p class="banner-p">Unleash your travel desires and book extraordinary train journeys that will transport you to unforgettable destinations, igniting a sense of adventure like never before.</p>
+        </div>
+
+
+
+        <form class="train-search-container input-container mb-4" action="/fetch-trains" method="post"  >
+
+<!--            <h3>Journey details</h3>-->
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"  />
+                <label class="form-check-label" for="flexSwitchCheckDefault">Return journey</label>
+            </div>
+            <div class='train-search-container-body'>
+
+                <div class="form-floating">
+                    <select class="form-select form-select-sm mb-3" id="floatingSelectDeparture" name="origin"  aria-label=".form-select-sm example"  >
+                        <option value="" selected disabled>Select</option>
+                        <option value="Chennai">Chennai Central</option>
+                        <option value="Banglore">Banglore Majestic</option>
+                        <option value="Hyderabad">Hyderabad Central</option>
+                        <option value="Mumbai">Mumbai</option>
+                        <option value="Indore">Indore</option>
+                        <option value="Delhi">Delhi</option>
+                        <option value="Pune">Pune</option>
+                        <option value="Trivendrum">Trivendrum</option>
+                        <option value="Bhopal">Bhopal</option>
+                        <option value="Kolkata">Kolkata</option>
+                        <option value="varanasi">varanasi</option>
+                        <option value="Jaipur">Jaipur</option>
+                    </select>
+                    <label for="floatingSelectDeparture">Departure station</label>
+                </div>
+                <div class="form-floating">
+                    <select class="form-select form-select-sm mb-3" id="floatingSelectDestination" name="destination" aria-label=".form-select-sm example" >
+                        <option value="" selected disabled>Select</option>
+                        <option value="Chennai">Chennai Central</option>
+                        <option value="Banglore">Banglore Majestic</option>
+                        <option value="Hyderabad">Hyderabad Central</option>
+                        <option value="Mumbai">Mumbai</option>
+                        <option value="Indore">Indore</option>
+                        <option value="Delhi">Delhi</option>
+                        <option value="Pune">Pune</option>
+                        <option value="Trivendrum">Trivendrum</option>
+                        <option value="Bhopal">Bhopal</option>
+                        <option value="Kolkata">Kolkata</option>
+                        <option value="varanasi">varanasi</option>
+                        <option value="Jaipur">Jaipur</option>
+                    </select>
+                    <label for="floatingSelectDestination">Destination station</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="date" class="form-control" id="journeyDate" name="departureTime" />
+                    <label for="journeyDate">Journey date</label>
+                </div>
+
+                <div class="form-floating mb-3" id="returnDateDiv" style="display: none" >
+                    <input type="date" class="form-control" id="returnDate" name="arrivalTime" />
+                    <label for="returnDate">Return date</label>
+                </div>
+
+
+                <div>
+                    <button class="btn btn-primary" type="submit" >Search</button>
+                </div>
+
+            </div>
+            <p id="ErrorValue" ></p>
+        </form>
+
+
+
+        <div class="availableTrainsContainer"  th:if="${#lists.size(trains) > 0}" >
+            <h1>Available Trains</h1>
+
+            <div class="trains">
+
+
+                <div class="train" th:each="train : ${trains}" >
+                    <div>
+                        <p> <b th:text="${train.trainName}"> </b></p>
+                        <p ><b>Train Number:</b>  <i th:text="${train.trainNumber}" ></i></p>
+                    </div>
+                    <div>
+                        <p ><b>Start Station:</b>  <i th:text="${train.origin}" ></i></p>
+                        <p ><b>Departure Time:</b>  <i th:text="${train.departureTime}" ></i></p>
+                    </div>
+                    <div>
+                        <p ><b>Destination:</b>  <i th:text="${train.destination}" ></i></p>
+                        <p ><b>Arrival Time:</b>  <i th:text="${train.arrivalTime}" ></i></p>
+                    </div>
+                    <div>
+                        <p ><b>Starting Price:</b> &#8377;  <i th:text="${train.basePrice}" ></i></p>
+                        <p ><b>Available Seats:</b>  <i th:text="${train.totalSeats}" ></i></p>
+                    </div>
+
+                    <div>
+                        <a th:href="${'/book-train/' + train._id}" ><button class="button btn btn-primary" >Book Now</button></a>
+                    </div>
+                </div>
+
+
+
+
+    </div>
+</div>
+<div class="availableTrainsContainer" th:if="${#lists.size(trains) == 0}" >
+    <h1> No Trains</h1>
+</div>
+
+
+
+
+
+
+
+
+</div>
+<section id="about" class="section-about  p-4">
+    <div class="container">
+        <h2 class="section-title">About Us</h2>
+        <p class="section-description">
+            &nbsp; &nbsp;&nbsp; &nbsp; Welcome to our train ticket booking app, where we are dedicated to providing you with an exceptional travel experience from start to finish. Whether you're embarking on a daily commute, planning an exciting cross-country adventure, or seeking a leisurely scenic route, our app offers an extensive selection of train options to cater to your unique travel preferences.
+        </p>
+        <p class="section-description">
+            &nbsp; &nbsp;&nbsp; &nbsp; We understand the importance of convenience and efficiency in your travel plans. Our user-friendly interface allows you to effortlessly browse through a wide range of train schedules, compare fares, and choose the most suitable seating options. With just a few taps, you can secure your train tickets and be one step closer to your desired destination. Our intuitive booking process enables you to customize your travel preferences, such as selecting specific departure times, opting for a window seat, or accommodating any special requirements.
+        </p>
+        <p class="section-description">
+            &nbsp; &nbsp;&nbsp; &nbsp; With our train ticket booking app, you can embrace the joy of exploring new destinations, immerse yourself in breathtaking scenery, and create cherished memories along the way. Start your journey today and let us be your trusted companion in making your train travel dreams a reality. Experience the convenience, reliability, and comfort that our app offers, and embark on unforgettable train adventures with confidence.
+        </p>
+
+        <span><h5>2023 SB TrainConnect - &copy; All rights reserved</h5></span>
+
+    </div>
+</section>
+</div>
+
+
+<script>
+
+    console.log(localStorage.getItem('userData'))
+    if (localStorage.getItem('userData')){
+
+        document.getElementById('logged-in-nav').style.display = "flex"
+        document.getElementById('logged-out-nav').style.display = "none"
+    } else{
+        document.getElementById('logged-in-nav').style.display = "none"
+        document.getElementById('logged-out-nav').style.display = "flex"
+    }
+
+
+</script>
+
+<script>
+    let isToggled = false;
+
+    const returnDateDiv = document.getElementById("returnDateDiv");
+
+    function toggle() {
+        isToggled = !isToggled; // Toggle the state
+
+        if(isToggled){
+            returnDateDiv.style.display="flex"
+        }else{
+            returnDateDiv.style.display="none"
+        }
+
+    }
+
+    // Attach change event listener to the switch
+    document.getElementById("flexSwitchCheckDefault").addEventListener("change", toggle);
+</script>
+
+<script>
+
+    let journeyDate = ""
+    let returnDate = ""
+
+    const error = document.getElementById("ErrorValue");
+
+    document.getElementById("journeyDate").addEventListener("input", function(event) {
+        journeyDate = event.target.value;
+        console.log("Selected Date:", journeyDate);
+        if(returnDate === ""){
+            if(new Date(journeyDate) < new Date()){
+                error.innerHTML = "Check journey date"
+            }else{
+                error.innerHTML = ""
+            }
+        }else{
+            if(new Date(journeyDate) < new Date() || new Date(journeyDate) > new Date(returnDate)){
+                error.innerHTML = "Check journey date and return date"
+            }else{
+                error.innerHTML = ""
+            }
+        }
+
+
+    });
+
+    document.getElementById("returnDate").addEventListener("input", function(event) {
+        returnDate = event.target.value;
+        console.log("Selected Date:", returnDate);
+        if(journeyDate === ""){
+            error.innerHTML = "Enter journey date"
+        }else{
+            if(new Date(journeyDate) < new Date() || new Date(journeyDate) > new Date(returnDate)){
+                error.innerHTML = "Check journey date and return date"
+            }else{
+                error.innerHTML = ""
+            }
+        }
+    });
+
+
+</script>
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+</body>
+</html>
